@@ -33,9 +33,16 @@ out/
 /nbdist/
 /.nb-gradle/
 
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
 ### VS Code ###
 .vscode/
 
+### Settings ###
 *.yml
 *.xml
 *.properties
