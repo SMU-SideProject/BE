@@ -1,5 +1,5 @@
 HELP.md
-.gradle
+seoulog/.gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
@@ -33,9 +33,16 @@ out/
 /nbdist/
 /.nb-gradle/
 
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
 ### VS Code ###
 .vscode/
 
+### Settings ###
 *.yml
 *.xml
 *.properties
