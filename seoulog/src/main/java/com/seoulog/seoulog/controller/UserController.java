@@ -2,9 +2,11 @@ package com.seoulog.seoulog.controller;
 
 import com.seoulog.seoulog.oauth.OauthInfo;
 import com.seoulog.seoulog.oauth.OauthService;
+import com.seoulog.seoulog.oauth.kakao.KakaoLoginRequest;
 import com.seoulog.seoulog.oauth.kakao.KakaoOauthService;
 import com.seoulog.seoulog.oauth.naver.NaverLoginRequest;
 import com.seoulog.seoulog.oauth.naver.NaverOauthService;
+import com.seoulog.seoulog.dto.TokenDto;
 import com.seoulog.seoulog.dto.UserDto;
 import com.seoulog.seoulog.entity.User;
 import com.seoulog.seoulog.jwt.TokenProvider;
@@ -12,9 +14,11 @@ import com.seoulog.seoulog.repository.UserRepository;
 import com.seoulog.seoulog.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.regex.Pattern;
@@ -59,6 +63,20 @@ public class UserController {
         //refresh토큰 저장
         OauthInfo naverInfo = naverOauthService.getNaverInfo(naverLoginRequest);
         return ResponseEntity.ok(oauthService.signup(naverInfo));
+    }
+
+    @PostMapping("/signup/kakao")
+    public ResponseEntity<User> kakaoSignup(@RequestBody KakaoLoginRequest kakaoLoginRequest) {
+        TokenDto tokenDto = new TokenDto();
+        System.out.println("naverLogin 컨트롤러실행");
+        //refresh토큰 저장
+//        PrincipalDetails kakaoInfo = kakaoOauthService.getKakaoInfo(kakaoLoginRequest, tokenDto);
+        OauthInfo kakaoInfo = kakaoOauthService.getKakaoInfo(kakaoLoginRequest);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        String refreshToken = tokenProvider.createRefreshToken((Authentication) kakaoInfo);
+
+        tokenDto.setRefreshToken(refreshToken);
+        return ResponseEntity.ok(oauthService.signup(kakaoInfo));
     }
 
 }
