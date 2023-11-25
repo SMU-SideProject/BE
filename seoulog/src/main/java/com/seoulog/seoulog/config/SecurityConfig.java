@@ -57,6 +57,7 @@ public class SecurityConfig {
                                 .requestMatchers(new AntPathRequestMatcher("/users/signup/**")).permitAll() //회원 가입을 위한 api (토큰이 없는 상태로 요청이 오므로 permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/favicon.ico")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/users/login/**")).permitAll()
 
                                 .anyRequest().authenticated())
 

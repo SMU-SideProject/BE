@@ -1,5 +1,6 @@
 package com.seoulog.seoulog.controller;
 
+import com.seoulog.seoulog.dto.LoginDto;
 import com.seoulog.seoulog.oauth.OauthInfo;
 import com.seoulog.seoulog.oauth.OauthService;
 import com.seoulog.seoulog.oauth.kakao.KakaoLoginRequest;
@@ -77,6 +78,14 @@ public class UserController {
 
         tokenDto.setRefreshToken(refreshToken);
         return ResponseEntity.ok(oauthService.signup(kakaoInfo));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<TokenDto> postLogin(@Valid @RequestBody LoginDto loginDto) {
+        TokenDto tokenDto = userService.login(loginDto);
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
     }
 
 }
