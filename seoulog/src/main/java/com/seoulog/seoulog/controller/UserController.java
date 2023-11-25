@@ -88,4 +88,16 @@ public class UserController {
         return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
     }
 
+    @PostMapping("/login/naver")
+    public ResponseEntity<TokenDto> navreLogin(@RequestBody NaverLoginRequest naverLoginRequest) {
+        System.out.println("naverLogin 컨트롤러실행");
+        //refresh토큰 저장
+        OauthInfo naverInfo = naverOauthService.getNaverInfo(naverLoginRequest);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        TokenDto tokenDto = oauthService.login(naverInfo);
+
+        return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
+    }
+
 }
