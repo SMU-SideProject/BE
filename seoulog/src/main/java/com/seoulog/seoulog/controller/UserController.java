@@ -1,5 +1,6 @@
 package com.seoulog.seoulog.controller;
 
+import com.seoulog.seoulog.dto.LoginDto;
 import com.seoulog.seoulog.oauth.OauthInfo;
 import com.seoulog.seoulog.oauth.OauthService;
 import com.seoulog.seoulog.oauth.kakao.KakaoLoginRequest;
@@ -79,4 +80,33 @@ public class UserController {
         return ResponseEntity.ok(oauthService.signup(kakaoInfo));
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<TokenDto> postLogin(@Valid @RequestBody LoginDto loginDto) {
+        TokenDto tokenDto = userService.login(loginDto);
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
+    }
+
+    @PostMapping("/login/naver")
+    public ResponseEntity<TokenDto> navreLogin(@RequestBody NaverLoginRequest naverLoginRequest) {
+        System.out.println("naverLogin 컨트롤러실행");
+        //refresh토큰 저장
+        OauthInfo naverInfo = naverOauthService.getNaverInfo(naverLoginRequest);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        TokenDto tokenDto = oauthService.login(naverInfo);
+
+        return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
+    }
+
+    @PostMapping("/login/kakao")
+    public ResponseEntity<TokenDto> kakaoLogin(@RequestBody KakaoLoginRequest kakaoLoginRequest) {
+        //refresh토큰 저장
+        OauthInfo kakaoInfo = kakaoOauthService.getKakaoInfo(kakaoLoginRequest);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        TokenDto tokenDto = oauthService.login(kakaoInfo);
+
+        return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
+    }
 }

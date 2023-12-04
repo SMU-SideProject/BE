@@ -47,4 +47,35 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
+    public TokenDto login(@RequestBody LoginDto loginDto) {
+        System.out.println("loginDto.getPassword() = " + loginDto.getPassword());
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
+        System.out.println("authenticationToken = " + authenticationToken);
+
+        System.out.println("loginDto.getEmail() = " + loginDto.getEmail());
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        //authentication token을 이용해서 authenticate메소드가 실행될때 loadUserByUsername이 실행
+        System.out.println("authenticationManagerBuilder.getObject() = " + authenticationManagerBuilder.getObject());
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String accessToken = tokenProvider.createAccessToken(authentication);
+        String refreshToken = tokenProvider.createRefreshToken(authentication);
+
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        System.out.println("user 인증객체얻기 성공");
+
+        //refreshToken은 DB에 저장
+        refreshTokenRepository.saveToken(refreshToken, principalDetails.getUser().getEmail());
+
+        TokenDto tokenDto = new TokenDto(accessToken, refreshToken);
+
+        System.out.println("UserService.login");
+        return tokenDto;
+
+    }
+
+
 }
