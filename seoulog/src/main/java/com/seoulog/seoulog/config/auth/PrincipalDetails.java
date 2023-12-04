@@ -1,10 +1,6 @@
 package com.seoulog.seoulog.config.auth;
 
-
-import com.seoulog.seoulog.config.oauth.OauthApiClient;
-import com.seoulog.seoulog.config.oauth.OauthInfo;
-import com.seoulog.seoulog.config.oauth.OauthProfileResponse;
-import com.seoulog.seoulog.config.oauth.naver.NaverLoginRequest;
+import com.seoulog.seoulog.oauth.OauthInfo;
 import com.seoulog.seoulog.dto.UserDto;
 import com.seoulog.seoulog.entity.User;
 import lombok.Data;
