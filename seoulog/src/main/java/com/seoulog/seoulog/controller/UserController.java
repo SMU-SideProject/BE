@@ -37,6 +37,8 @@ public class UserController {
     private final NaverOauthService naverOauthService;
     private final KakaoOauthService kakaoOauthService;
     private final OauthService oauthService;
+    private final NaverLoginRequest naverLoginRequest;
+    private final KakaoLoginRequest kakaoLoginRequest;
     private final String regx = "^(.+)@(.+)$";
     private final Pattern pattern = Pattern.compile(regx);
 
@@ -59,24 +61,27 @@ public class UserController {
     }
 
     @PostMapping("/signup/naver")
-    public ResponseEntity<User> navreSignup(@RequestBody NaverLoginRequest naverLoginRequest) {
+    public ResponseEntity<User> navreSignup(@RequestParam String code) {
         System.out.println("naverLogin 컨트롤러실행");
+        System.out.println("NaverLoginRequest: "+ code);
         //refresh토큰 저장
+        naverLoginRequest.setAuthorizationCode(code);
         OauthInfo naverInfo = naverOauthService.getNaverInfo(naverLoginRequest);
         return ResponseEntity.ok(oauthService.signup(naverInfo));
     }
 
     @PostMapping("/signup/kakao")
-    public ResponseEntity<User> kakaoSignup(@RequestBody KakaoLoginRequest kakaoLoginRequest) {
+    public ResponseEntity<User> kakaoSignup(@RequestParam String code) {
+       kakaoLoginRequest.setAuthorizationCode(code);
         TokenDto tokenDto = new TokenDto();
-        System.out.println("naverLogin 컨트롤러실행");
+        System.out.println("카카오 컨트롤러실행");
         //refresh토큰 저장
 //        PrincipalDetails kakaoInfo = kakaoOauthService.getKakaoInfo(kakaoLoginRequest, tokenDto);
         OauthInfo kakaoInfo = kakaoOauthService.getKakaoInfo(kakaoLoginRequest);
         HttpHeaders httpHeaders = new HttpHeaders();
-        String refreshToken = tokenProvider.createRefreshToken((Authentication) kakaoInfo);
+        /*String refreshToken = tokenProvider.createRefreshToken((Authentication) kakaoInfo);
 
-        tokenDto.setRefreshToken(refreshToken);
+        tokenDto.setRefreshToken(refreshToken);*/
         return ResponseEntity.ok(oauthService.signup(kakaoInfo));
     }
 
@@ -89,19 +94,22 @@ public class UserController {
     }
 
     @PostMapping("/login/naver")
-    public ResponseEntity<TokenDto> navreLogin(@RequestBody NaverLoginRequest naverLoginRequest) {
+    public ResponseEntity<TokenDto> navreLogin(@RequestParam String code) {
         System.out.println("naverLogin 컨트롤러실행");
         //refresh토큰 저장
+        naverLoginRequest.setAuthorizationCode(code);
         OauthInfo naverInfo = naverOauthService.getNaverInfo(naverLoginRequest);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         TokenDto tokenDto = oauthService.login(naverInfo);
+        System.out.println("User login info: " + naverInfo);
 
         return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
     }
 
     @PostMapping("/login/kakao")
-    public ResponseEntity<TokenDto> kakaoLogin(@RequestBody KakaoLoginRequest kakaoLoginRequest) {
+    public ResponseEntity<TokenDto> kakaoLogin(@RequestParam String code) {
+        kakaoLoginRequest.setAuthorizationCode(code);
         //refresh토큰 저장
         OauthInfo kakaoInfo = kakaoOauthService.getKakaoInfo(kakaoLoginRequest);
         HttpHeaders httpHeaders = new HttpHeaders();
