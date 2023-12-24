@@ -31,7 +31,7 @@ public class NaverOauthService {
         return OauthInfo.builder()
                 .refreshToken(naverToken.getRefreshToken())
                 .email(oauthProfile.getEmail())
-                .type(User.Type.NAVER)
+                .type(naverLoginRequest.userType())
                 .nickname(oauthProfile.getNickName())
                 .build();
     }

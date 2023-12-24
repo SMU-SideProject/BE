@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 public class KakaoOauthService {
     private final OauthApiClient kakaoApiClient;
     private final UserRepository userRepository;
-    public OauthInfo getKakaoInfo(OauthLoginRequest oauthLoginRequest) {
-        TokenDto kakaoToken = kakaoApiClient.getOauthAccessToken(oauthLoginRequest);
+    public OauthInfo getKakaoInfo(KakaoLoginRequest kakaoLoginRequest) {
+        TokenDto kakaoToken = kakaoApiClient.getOauthAccessToken(kakaoLoginRequest);
         OauthProfileResponse oauthProfile = kakaoApiClient.getOauthProfile(kakaoToken.getAccessToken());
 
 //        UserDto kakaoUser = principalDetails.getUserDto();
@@ -28,8 +28,8 @@ public class KakaoOauthService {
 
         return OauthInfo.builder()
                 .refreshToken(kakaoToken.getRefreshToken())
-                .email(oauthProfile.getEmail())
-                .type(User.Type.NAVER)
+                .email(oauthProfile.getNickName()+"@kakao.com")
+                .type(kakaoLoginRequest.userType())
                 .nickname(oauthProfile.getNickName())
                 .build();
     }

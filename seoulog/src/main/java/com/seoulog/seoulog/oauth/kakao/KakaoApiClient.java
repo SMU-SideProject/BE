@@ -24,7 +24,7 @@ public class KakaoApiClient implements OauthApiClient {
     @Value("${spring.security.oauth2.client.provider.kakao.token-uri}")
     private String authUrl;
 
-    @Value("${spring.security.oauth2.client.provider.kakao.authorization-uri}")
+    @Value("${spring.security.oauth2.client.provider.kakao.user-info-uri}")
     private String apiUrl;
 
     private final RestTemplate restTemplate;
@@ -49,26 +49,23 @@ public class KakaoApiClient implements OauthApiClient {
 
     @Override
     public OauthProfileResponse getOauthProfile(String accessToken) {
-        String url = apiUrl + "/v2/user/me";
 
         HttpHeaders httpHeaders = newHttpHeaders();
         httpHeaders.set("Authorization", "Bearer " + accessToken);
 
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("property_keys", "[\"kakao_account.email\", \"kakao_account.profile\"]");
+        // Request entity 생성
+        HttpEntity<?> userInfoEntity = new HttpEntity<>(httpHeaders);
 
-        HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
-
-        ResponseEntity<KakaoMyInfo> response = restTemplate.postForEntity(apiUrl, request, KakaoMyInfo.class);
-//        ResponseEntity<OauthInfo> response = restTemplate.postForEntity(apiUrl, request, OauthInfo.class);
-//        ResponseEntity<NaverMyInfo> response = restTemplate.postForEntity(apiUrl, request, NaverMyInfo.class);
-
+// Post 방식으로 Http 요청
+// 응답 데이터 형식은 Hashmap 으로 지정
+        ResponseEntity<KakaoMyInfo> response = restTemplate.postForEntity(apiUrl, userInfoEntity, KakaoMyInfo.class);
+        System.out.println("user info: "+ response.getBody());
         return response.getBody();
     }
 
     @Override
     public User.Type getUserType() {
-        return null;
+        return User.Type.KAKAO;
     }
 
     private HttpHeaders newHttpHeaders() {

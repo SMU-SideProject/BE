@@ -7,7 +7,6 @@ import com.seoulog.seoulog.dto.TokenDto;
 import com.seoulog.seoulog.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
@@ -30,20 +29,19 @@ public class NaverApiClient implements OauthApiClient {
     @Value("${spring.security.oauth2.client.provider.naver.user-info-uri}")
     private String apiUrl;
 
-    @Value("${spring.security.oauth2.client.registration.naver.client-id}")
+    @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
     private String clientSecret;
 
     private final RestTemplate restTemplate;
 
-    public NaverApiClient(RestTemplateBuilder builder) {
-        this.restTemplate = builder.build();
+    public NaverApiClient() {
+        this.restTemplate = new RestTemplate();
     }
 
 
     @Override
     public TokenDto getOauthAccessToken(OauthLoginRequest oauthLoginRequest) {
 //        String url = authUrl + "/oauth2.0/token";
-
         HttpHeaders httpHeaders = newHttpHeaders();
 
         MultiValueMap<String, String> body = oauthLoginRequest.makeBody();
@@ -55,8 +53,6 @@ public class NaverApiClient implements OauthApiClient {
 
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
         ResponseEntity<NaverToken> response = restTemplate.postForEntity(authUrl, request, NaverToken.class); //body에 naverToken 반환
-        System.out.println("response = " + response);
-        System.out.println("response.getBody() = " + response.getBody());
 
         return new TokenDto(Objects.requireNonNull(response.getBody()).getAccessToken(), response.getBody().getRefreshToken()); //Token 객체 반환
     }

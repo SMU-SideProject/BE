@@ -3,9 +3,12 @@ package com.seoulog.seoulog.oauth.naver;
 import com.seoulog.seoulog.oauth.OauthLoginRequest;
 import com.seoulog.seoulog.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jdk.jfr.Category;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -17,23 +20,27 @@ import java.security.SecureRandom;
 //이므로, DTO에서 받은 변수들을 조합합니다
 @Getter
 @NoArgsConstructor
+@Component
 public class NaverLoginRequest implements OauthLoginRequest {
     @Value("${spring.security.oauth2.client.registration.naver.authorization-grant-type}")
     private String grantType;
 
-    @Schema(example = "xt7snAboggM8W0GxDvbM")
+    @Value("${spring.security.oauth2.client.registration.naver.client-id}")
     private String clientId;
 
     @Schema(example = "jYHm2t6tggTCSsb50x")
     private String authorizationCode;
 
+    public void setAuthorizationCode(String authorizationCode) {
+        this.authorizationCode = authorizationCode;
+    }
 
     @Override
     public MultiValueMap<String, String> makeBody() {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         SecureRandom random = new SecureRandom();
 
-        body.add("grant_type", grantType);
+        body.add("grant_type",grantType);
         body.add("client_id", clientId);
         body.add("code", authorizationCode);
         body.add("state", new BigInteger(130, random).toString());
