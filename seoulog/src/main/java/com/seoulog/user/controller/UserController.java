@@ -38,23 +38,11 @@ public class UserController {
     private final OauthService oauthService;
     private final NaverLoginRequest naverLoginRequest;
     private final KakaoLoginRequest kakaoLoginRequest;
-    private final String regx = "^(.+)@(.+)$";
-    private final Pattern pattern = Pattern.compile(regx);
-
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(
             @Valid @RequestBody UserDto userDto
     ) {
-        if(!pattern.matcher(userDto.getEmail()).matches()){
-            return new ResponseEntity<>("이메일 형식을 정확히 입력해주세요.", HttpStatus.BAD_REQUEST);
-
-        }
-        else if (userRepository.findOneWithAuthoritiesByEmail(userDto.getEmail()) != null) {
-            return new ResponseEntity<>("이미 가입되어 있는 유저입니다.", HttpStatus.BAD_REQUEST);
-        } else if(userRepository.findByNickname(userDto.getNickname()) != null){
-            return new ResponseEntity<>("이미 존재하는 닉네임입니다.", HttpStatus.BAD_REQUEST);
-        }
         userService.signup(userDto);
         return ResponseEntity.ok(null); //UserDto를 파라미터로 받아서 회원가입
     }
