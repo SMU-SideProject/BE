@@ -28,23 +28,21 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin' # https://github.com/actions/setup-java
-
-    ## move folder
-    - name: Change folder
-    - run: cd /seoulog
     
-    ## create application-prod.properties
-    - name: make application-prod.properties
+    ## create application-prod.yml
+    - name: make application-prod.yml
       if: contains(github.ref, 'main') # branch가 main 일 때, 나머지는 위와 동일
       run: |
           cd ./src/main/resources
-          touch ./application-prod.properties
-          echo "${{ secrets.PROPERTIES_PROD }}" > ./application-prod.properties
+          touch ./application-prod.yml
+          echo "${{ secrets.PROPERTIES_PROD }}" > ./application-prod.yml
       shell: bash
+      working-directory: /seoulog
 
     ## gradle build
     - name: Build with Gradle
       run: ./gradlew build -x test -x ktlintCheck -x ktlintTestSourceSetCheck -x ktlintMainSourceSetCheck -x ktlintKotlinScriptCheck
+      working-directory: /seoulog
       
     ## docker build & push to production
     - name: Docker build & push to prod
