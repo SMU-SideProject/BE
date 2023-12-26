@@ -37,12 +37,12 @@ jobs:
           touch ./application-prod.yml
           echo "${{ secrets.PROPERTIES_PROD }}" > ./application-prod.yml
       shell: bash
-      working-directory: /seoulog
+      working-directory: ./seoulog
 
     ## gradle build
     - name: Build with Gradle
       run: ./gradlew build -x test -x ktlintCheck -x ktlintTestSourceSetCheck -x ktlintMainSourceSetCheck -x ktlintKotlinScriptCheck
-      working-directory: /seoulog
+      working-directory: ./seoulog
       
     ## docker build & push to production
     - name: Docker build & push to prod
