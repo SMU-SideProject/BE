@@ -43,6 +43,5 @@ out/
 .vscode/
 
 ### Settings ###
-*.yml
-*.xml
+application.yml
 application.properties
