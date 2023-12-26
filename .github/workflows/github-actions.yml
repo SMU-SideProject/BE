@@ -51,6 +51,7 @@ jobs:
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -t ${{ secrets.DOCKER_REPO }}/seoulog .
           docker push ${{ secrets.DOCKER_REPO }}/seoulog
+      working-directory: ./seoulog
           
     ## deploy to production
     - name: Deploy to prod
