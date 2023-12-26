@@ -42,6 +42,12 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build -x test -x ktlintCheck -x ktlintTestSourceSetCheck -x ktlintMainSourceSetCheck -x ktlintKotlinScriptCheck
 
+    - name: Init gradle wrapper
+      run: gradle wrapper
+    
+    - name: Change wrapper permissions
+      run: chmod +x ./gradlew
+      
     ## docker build & push to production
     - name: Docker build & push to prod
       if: contains(github.ref, 'main')
