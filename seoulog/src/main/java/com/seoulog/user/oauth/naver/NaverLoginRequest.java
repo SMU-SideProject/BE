@@ -42,7 +42,6 @@ public class NaverLoginRequest implements OauthLoginRequest {
         body.add("client_id", clientId);
         body.add("code", authorizationCode);
         body.add("state", new BigInteger(130, random).toString());
-        System.out.println(body); //여기까지 실행
 
         return body;
     }

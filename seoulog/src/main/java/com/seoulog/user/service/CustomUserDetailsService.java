@@ -18,12 +18,18 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(final String email) {
-        User userEntity = userRepository.findOneWithAuthoritiesByEmail(email);
-        if (userEntity != null) {
-            return new PrincipalDetails(userEntity); //userEntity를 넣어줘야 UserDetails에서 우리의 User 객체를 사용할 수 있음
+    public UserDetails loadUserByUsername(final String uniqueId) {
+        User userEntity = userRepository.findOneWithAuthoritiesByEmail(uniqueId);
+
+        if (userEntity == null) {
+            userEntity = userRepository.findByOauthId(uniqueId);
+            if (userEntity == null) {
+                return null;
+            } else {
+                return new PrincipalDetails(userEntity); //userEntity를 넣어줘야 UserDetails에서 우리의 User 객체를 사용할 수 있음
+            }
         }
-        return null;
+        return new PrincipalDetails(userEntity); //userEntity를 넣어줘야 UserDetails에서 우리의 User 객체를 사용할 수 있음
     }
 
     private PrincipalDetails createUser(String username, User user) {

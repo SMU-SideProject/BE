@@ -22,16 +22,14 @@ public class NaverOauthService {
     public OauthInfo getNaverInfo(NaverLoginRequest naverLoginRequest) {
         TokenDto naverToken = naverApiClient.getOauthAccessToken(naverLoginRequest);
         OauthProfileResponse oauthProfile = naverApiClient.getOauthProfile(naverToken.getAccessToken());
-//        UserDto naverUserDto = principalDetails.getUserDto();
 
-        //        userService.signup(naverUserDto);
-//        log.info("save User={}", naverUserDto);
 
         return OauthInfo.builder()
                 .refreshToken(naverToken.getRefreshToken())
                 .email(oauthProfile.getEmail())
                 .type(naverLoginRequest.userType())
                 .nickname(oauthProfile.getNickName())
+                .id(oauthProfile.getId())
                 .build();
     }
 

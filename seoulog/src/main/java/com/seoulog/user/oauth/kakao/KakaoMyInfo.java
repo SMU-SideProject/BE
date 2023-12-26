@@ -10,6 +10,7 @@ import lombok.Getter;
 public class KakaoMyInfo implements OauthProfileResponse {
     @JsonProperty("kakao_account")
     private KakaoAccount kakaoAccount;
+    private Long id;
 
     @Getter
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -32,5 +33,10 @@ public class KakaoMyInfo implements OauthProfileResponse {
     @Override
     public String getNickName() {
         return kakaoAccount.getProfile().getNickname();
+    }
+
+    @Override
+    public String getId() {
+        return String.valueOf(id);
     }
 }

@@ -28,7 +28,7 @@ public class User {
     @Column(name = "activated") //탈퇴시 false
     private boolean activated;
 
-    @Column(nullable = false)
+    @Column
     private String email;
 
     @Column(name = "refresh_token")
@@ -41,5 +41,8 @@ public class User {
     public enum Type {
         NATIVE, NAVER, KAKAO
     }
+
+    @Column
+    private String oauthId;
 
 }

@@ -47,10 +47,6 @@ public class NaverApiClient implements OauthApiClient {
         MultiValueMap<String, String> body = oauthLoginRequest.makeBody();
         body.add("client_secret", clientSecret);
 
-        System.out.println("body = " + body);
-        System.out.println("body.get(state) = " + body.get("state"));
-
-
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
         ResponseEntity<NaverToken> response = restTemplate.postForEntity(authUrl, request, NaverToken.class); //body에 naverToken 반환
 
@@ -59,13 +55,11 @@ public class NaverApiClient implements OauthApiClient {
 
     @Override
     public OauthProfileResponse getOauthProfile(String accessToken) {
-//        String url = apiUrl + "/v1/nid/me";
 
         HttpHeaders httpHeaders = newHttpHeaders();
         httpHeaders.set("Authorization", "Bearer " + accessToken);
 
         HttpEntity<?> request = new HttpEntity<>(httpHeaders);
-//        ResponseEntity<OauthInfo> response = restTemplate.postForEntity(apiUrl, request, OauthInfo.class);
         ResponseEntity<NaverMyInfo> response = restTemplate.postForEntity(apiUrl, request, NaverMyInfo.class);
 
 

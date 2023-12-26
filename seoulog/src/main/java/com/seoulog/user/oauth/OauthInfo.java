@@ -11,4 +11,5 @@ public class OauthInfo {
     private final String email;
     private final User.Type type;
     private final String refreshToken;
+    private final String id;
 }

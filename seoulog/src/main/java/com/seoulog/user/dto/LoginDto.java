@@ -21,4 +21,5 @@ public class LoginDto {
     private String email;
     private String accessToken;
     private String tokenType;
+    private String oauthId;
 }

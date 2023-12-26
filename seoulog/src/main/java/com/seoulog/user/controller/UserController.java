@@ -63,7 +63,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenDto> postLogin(@Valid @RequestBody LoginDto loginDto) {
-        TokenDto tokenDto = userService.login(loginDto);
+        TokenDto tokenDto = userService.login(loginDto, User.Type.NATIVE);
         HttpHeaders httpHeaders = new HttpHeaders();
 
         return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
@@ -74,9 +74,10 @@ public class UserController {
         //refresh토큰 저장
         naverLoginRequest.setAuthorizationCode(code);
         OauthInfo naverInfo = naverOauthService.getNaverInfo(naverLoginRequest);
+        System.out.println("naverInfo: " + naverInfo);
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        TokenDto tokenDto = oauthService.login(naverInfo);
+        TokenDto tokenDto = oauthService.login(naverInfo, naverInfo.getType());
 
         return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
     }
@@ -87,7 +88,7 @@ public class UserController {
         //refresh토큰 저장
         OauthInfo kakaoInfo = kakaoOauthService.getKakaoInfo(kakaoLoginRequest);
         HttpHeaders httpHeaders = new HttpHeaders();
-        TokenDto tokenDto = oauthService.login(kakaoInfo);
+        TokenDto tokenDto = oauthService.login(kakaoInfo, kakaoInfo.getType());
 
         return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
     }

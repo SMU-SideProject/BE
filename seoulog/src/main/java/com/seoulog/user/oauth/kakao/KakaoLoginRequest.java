@@ -43,6 +43,6 @@ public class KakaoLoginRequest implements OauthLoginRequest {
 
     @Override
     public User.Type userType() {
-        return null;
+        return User.Type.KAKAO;
     }
 }

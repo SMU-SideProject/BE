@@ -18,6 +18,7 @@ public class KakaoOauthService {
     public OauthInfo getKakaoInfo(KakaoLoginRequest kakaoLoginRequest) {
         TokenDto kakaoToken = kakaoApiClient.getOauthAccessToken(kakaoLoginRequest);
         OauthProfileResponse oauthProfile = kakaoApiClient.getOauthProfile(kakaoToken.getAccessToken());
+        System.out.println("카카오 프로필 : " + oauthProfile);
 
 //        UserDto kakaoUser = principalDetails.getUserDto();
         //아직 회원가입을 하지 않았다면 회원가입 진행
@@ -26,9 +27,9 @@ public class KakaoOauthService {
 
         return OauthInfo.builder()
                 .refreshToken(kakaoToken.getRefreshToken())
-                .email(oauthProfile.getNickName()+"@kakao.com")
                 .type(kakaoLoginRequest.userType())
                 .nickname(oauthProfile.getNickName())
+                .id(oauthProfile.getId())
                 .build();
     }
 }

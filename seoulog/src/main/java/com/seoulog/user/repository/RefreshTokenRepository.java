@@ -3,24 +3,19 @@ package com.seoulog.user.repository;
 import com.seoulog.user.entity.User;
 import jakarta.persistence.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-@Repository
-@RequiredArgsConstructor
-public class RefreshTokenRepository {
+public interface RefreshTokenRepository extends JpaRepository<User, Long> {
 
-    private final EntityManager em;
-    public User findByEmail(String email) {
-        return em.createQuery("select u.refreshToken from User as u where u.email=:email", User.class)
-                .setParameter("email", email)
-                .getSingleResult();
-    }
+    User findByEmail(String email);
+    @Modifying
+    @Query("update User u set u.refreshToken = :refreshToken where u.email =:email")
+    void save(String refreshToken, String email);
 
-    public void saveToken(String refreshToken, String email) {
-         em.createQuery("update User as u set u.refreshToken=:refreshToken where u.email=:email")
-                .setParameter("refreshToken", refreshToken)
-                .setParameter("email", email)
-                 .executeUpdate();
-        System.out.println("RefreshTokenRepository.saveToken");
-    }
+    @Modifying
+    @Query("update User u set u.refreshToken =:refreshToken where u.oauthId =:oauthId and u.type = :type")
+    void save(String refreshToken, String oauthId, User.Type type);
 }

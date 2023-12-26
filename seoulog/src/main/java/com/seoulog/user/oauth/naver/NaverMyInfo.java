@@ -15,6 +15,7 @@ public class NaverMyInfo implements OauthProfileResponse {
     @Getter
     @JsonIgnoreProperties(ignoreUnknown = true)
     static class Response {
+        private String id;
         private String email;
         private String nickname;
     }
@@ -27,5 +28,9 @@ public class NaverMyInfo implements OauthProfileResponse {
     @Override
     public String getNickName() {
         return response.getNickname();
+    }
+
+    public String getId() {
+        return response.getId();
     }
 }
