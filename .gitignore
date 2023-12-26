@@ -45,4 +45,4 @@ out/
 ### Settings ###
 *.yml
 *.xml
-*.properties
+application.properties
