@@ -9,11 +9,13 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
 
 
 @EnableWebSecurity
@@ -32,8 +34,8 @@ public class SecurityConfig {
         this.tokenProvider = tokenProvider;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
-    }
 
+    }
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -41,7 +43,6 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
         http
                 // token을 사용하는 방식이기 때문에 csrf를 disable합니다.
                 .csrf(csrf -> csrf.disable())
@@ -52,6 +53,7 @@ public class SecurityConfig {
                         .accessDeniedHandler(jwtAccessDeniedHandler)
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 );
+
         http.cors(Customizer.withDefaults());
 
         http
@@ -82,4 +84,12 @@ public class SecurityConfig {
 
     }
 
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers(new AntPathRequestMatcher("/h2-console/**"))
+                .requestMatchers(new AntPathRequestMatcher("/favicon.ico"))
+                .requestMatchers(new AntPathRequestMatcher("/users/login/**"))
+                .requestMatchers(new AntPathRequestMatcher("/users/signup/**"));
+
+    }
 }

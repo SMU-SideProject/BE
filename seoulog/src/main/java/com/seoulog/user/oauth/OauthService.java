@@ -50,7 +50,7 @@ public class OauthService {
     @Transactional
     public TokenDto login(OauthInfo oauthInfo, User.Type type) {
         LoginDto loginDto = LoginDto.builder()
-                .password(oauthInfo.getNickname())
+                .password(oauthInfo.getId())
                 .oauthId(oauthInfo.getId())
                 .build();
         return userService.login(loginDto, type);
