@@ -1,5 +1,6 @@
 package com.seoulog.user.jwt;
 
+import com.seoulog.user.propertySourceFactory.YamlPropertySourceFactory;
 import com.seoulog.user.repository.RefreshTokenRepository;
 import com.seoulog.user.service.CustomUserDetailsService;
 import io.jsonwebtoken.*;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
+@PropertySource(value = "classpath:application-prod.yml", factory = YamlPropertySourceFactory.class)
 public class TokenProvider implements InitializingBean{
 
     private final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
