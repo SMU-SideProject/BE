@@ -63,6 +63,7 @@ public class SecurityConfig {
                                 .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/favicon.ico")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/users/login/**")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/test/**")).permitAll()
 
                                 .anyRequest().authenticated())
 
@@ -89,7 +90,8 @@ public class SecurityConfig {
         return (web) -> web.ignoring().requestMatchers(new AntPathRequestMatcher("/h2-console/**"))
                 .requestMatchers(new AntPathRequestMatcher("/favicon.ico"))
                 .requestMatchers(new AntPathRequestMatcher("/users/login/**"))
-                .requestMatchers(new AntPathRequestMatcher("/users/signup/**"));
+                .requestMatchers(new AntPathRequestMatcher("/users/signup/**"))
+                .requestMatchers(new AntPathRequestMatcher("/test/**"));
 
     }
 }
