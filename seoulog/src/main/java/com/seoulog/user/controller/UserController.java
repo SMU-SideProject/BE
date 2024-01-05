@@ -86,7 +86,7 @@ public class UserController {
     public ResponseEntity<TokenDto> kakaoLogin(@RequestParam String code) {
         kakaoLoginRequest.setAuthorizationCode(code);
         //refresh토큰 저장
-        OauthInfo kakaoInfo = kakaoOauthService.getKakaoInfo(kakaoLoginRequest);
+        OauthInfo kakaoInfo = kakaoOauthService.getKakaoLoginInfo(kakaoLoginRequest);
         HttpHeaders httpHeaders = new HttpHeaders();
         TokenDto tokenDto = oauthService.login(kakaoInfo, kakaoInfo.getType());
 

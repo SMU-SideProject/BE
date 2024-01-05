@@ -23,9 +23,6 @@ public class KakaoLoginRequest implements OauthLoginRequest {
 
     private String authorizationCode;
 
-    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
-    private String redirectUrl;
-
     public void setAuthorizationCode(String authorizationCode) {
         this.authorizationCode = authorizationCode;
     }
@@ -39,7 +36,6 @@ public class KakaoLoginRequest implements OauthLoginRequest {
 
         body.add("grant_type", grantType);
         body.add("client_id", clientId);
-        body.add("redirect_uri", redirectUrl);
         body.add("code", authorizationCode);
 
         return body;
