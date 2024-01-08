@@ -73,8 +73,7 @@ public class UserController {
     public ResponseEntity<TokenDto> navreLogin(@RequestParam String code) {
         //refresh토큰 저장
         naverLoginRequest.setAuthorizationCode(code);
-        OauthInfo naverInfo = naverOauthService.getNaverInfo(naverLoginRequest);
-        System.out.println("naverInfo: " + naverInfo);
+        OauthInfo naverInfo = naverOauthService.getNaverLoginInfo(naverLoginRequest);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         TokenDto tokenDto = oauthService.login(naverInfo, naverInfo.getType());
