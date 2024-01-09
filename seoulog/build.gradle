@@ -44,6 +44,9 @@ dependencies {
 
 	//mariadb
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+	
+    //S3
+    implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
 }
 
 tasks.named('bootBuildImage') {
