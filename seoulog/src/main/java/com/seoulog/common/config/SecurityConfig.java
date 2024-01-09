@@ -1,8 +1,9 @@
-package com.seoulog.user.config;
+package com.seoulog.common.config;
 
 import com.seoulog.user.exception.JwtAccessDeniedHandler;
 import com.seoulog.user.exception.JwtAuthenticationEntryPoint;
-import com.seoulog.user.jwt.*;
+import com.seoulog.user.jwt.JwtSecurityConfig;
+import com.seoulog.user.jwt.TokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -15,7 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
 
 
 @EnableWebSecurity
@@ -57,18 +57,17 @@ public class SecurityConfig {
         http.cors(Customizer.withDefaults());
 
         http
-                .authorizeHttpRequests((authorizeRequests)->
-                        authorizeRequests
-                                .requestMatchers(new AntPathRequestMatcher("/users/signup/**")).permitAll() //회원 가입을 위한 api (토큰이 없는 상태로 요청이 오므로 permitAll()
-                                .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
-                                .requestMatchers(new AntPathRequestMatcher("/favicon.ico")).permitAll()
-                                .requestMatchers(new AntPathRequestMatcher("/users/login/**")).permitAll()
-                                .requestMatchers(new AntPathRequestMatcher("/test/**")).permitAll()
+                .authorizeHttpRequests(auth ->
+                        auth
+                            .requestMatchers(new AntPathRequestMatcher("/users/signup/**")).permitAll() //회원 가입을 위한 api (토큰이 없는 상태로 요청이 오므로 permitAll()
+                                    .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
+                                    .requestMatchers(new AntPathRequestMatcher("/favicon.ico")).permitAll()
+                                    .requestMatchers(new AntPathRequestMatcher("/users/login/**")).permitAll()
+                                    .requestMatchers(new AntPathRequestMatcher("/file/**")).permitAll()
+                                    .requestMatchers(new AntPathRequestMatcher("/test/**")).permitAll()
+                                    .anyRequest().permitAll());
 
-                                .anyRequest().authenticated())
-
-
-
+        http
                 // 세션을 사용하지 않기 때문에 STATELESS로 설정
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

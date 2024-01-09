@@ -44,4 +44,6 @@ out/
 
 ### Settings ###
 application.yml
+application-local.yml
+application-prod.yml
 application.properties
