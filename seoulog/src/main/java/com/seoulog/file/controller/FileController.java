@@ -1,8 +1,10 @@
 package com.seoulog.file.controller;
 
-import com.seoulog.file.dto.ImageNameDto;
-import com.seoulog.file.service.PreSignedUrlService;
+import com.seoulog.file.dto.PreSignedUrlsDto;
+import com.seoulog.file.dto.UploadFilesDto;
+import com.seoulog.file.service.FileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,14 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/file")
 @RequiredArgsConstructor
 public class FileController {
-    private final PreSignedUrlService preSignedUrlService;
-    private String path;
+    private final FileService fileService;
 
     @PostMapping("/presigned")
-    public String createPreSigned(@RequestBody ImageNameDto imageNameDto) {
-        path ="test";
-        String imageName = imageNameDto.getFileName();
-        return preSignedUrlService.getPreSignedUrl(path, imageName);
+    public ResponseEntity<PreSignedUrlsDto> createPreSigned(@RequestBody UploadFilesDto uploadFilesDto) {
+        PreSignedUrlsDto preSignedUrlsDto = fileService.getPreSignedUrls(uploadFilesDto);
+        return ResponseEntity.ok(preSignedUrlsDto);
     }
 
 }

@@ -44,7 +44,7 @@ public class PreSignedUrlService {
     private Date getPreSignedUrlExpiration() {
         Date expiration = new Date();
         long expTimeMillis = expiration.getTime();
-        expTimeMillis += 1000 * 60 * 5;
+        expTimeMillis += 1000 * 60 * 5; // 5 minutes
         expiration.setTime(expTimeMillis);
         return expiration;
     }
