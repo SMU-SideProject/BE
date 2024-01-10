@@ -1,5 +1,8 @@
 package com.seoulog.common.error;
 
+import lombok.Getter;
+
+@Getter
 public class ErrorResponse {
 
     private final int status;
