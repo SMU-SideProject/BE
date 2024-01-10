@@ -49,6 +49,10 @@ dependencies {
     implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
 }
 
+configurations.configureEach {
+	exclude group: 'commons-logging', module: 'commons-logging'
+}
+
 tasks.named('bootBuildImage') {
 	builder = 'paketobuildpacks/builder-jammy-base:latest'
 }

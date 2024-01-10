@@ -20,7 +20,11 @@ public enum ErrorCode {
     SIGNUP_REDUNDANT_NICKNAME(HttpStatus.BAD_REQUEST, "중복된 닉네입 입니다."),
     SIGNUP_PASSWORD_WRONG(HttpStatus.BAD_REQUEST, "비밀번호가 잘못 되었습니다."),
     SIGNUP_EMAIL_EXIST(HttpStatus.BAD_REQUEST, "이미 가입된 이메일 입니다."),
-    SIGNUP_USER_EXIST(HttpStatus.BAD_REQUEST, "이미 가입된 회원입니다.");
+    SIGNUP_USER_EXIST(HttpStatus.BAD_REQUEST, "이미 가입된 회원입니다."),
+
+    //file err
+    TOO_MANY_IMAGES(HttpStatus.BAD_REQUEST, "최대 이미지 수를 초과하였습니다.")
+    ;
 
     private final HttpStatus status;
     private final String message;
