@@ -5,11 +5,7 @@ import org.slf4j.LoggerFactory;
 
 public class CustomLogger {
 
-    private static Logger log;
-
-    public Logger getLog() {
-        return LoggerFactory.getLogger(this.getClass());
-    }
+    private static final Logger log = LoggerFactory.getLogger(Logger.class);
 
     public static void error(String message) {
         log.error(message);
