@@ -8,8 +8,4 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(force = true)
 public class UploadFilesDto {
     private final List<String> images;
-
-    public UploadFilesDto(List<String> images) {
-        this.images = images;
-    }
 }
