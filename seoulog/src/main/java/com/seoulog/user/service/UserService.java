@@ -11,6 +11,7 @@ import com.seoulog.user.jwt.TokenProvider;
 import com.seoulog.user.repository.RefreshTokenRepository;
 import com.seoulog.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -96,6 +97,15 @@ public class UserService {
 
         return tokenDto;
 
+    }
+    public ResponseCookie createCookie(String refreshToken) {
+        String cookieName = "refresh-token";
+        return ResponseCookie.from(cookieName, refreshToken)
+                .path("/")
+                .httpOnly(false)
+                .secure(false)
+                .sameSite("None")
+                .build();
     }
 
 
