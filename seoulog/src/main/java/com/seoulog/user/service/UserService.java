@@ -60,16 +60,10 @@ public class UserService {
     }
 
     @Transactional
-    public TokenDto login(@RequestBody LoginDto loginDto, User.Type type) {
-        User user;
-        UsernamePasswordAuthenticationToken authenticationToken = null;
-        if (type == User.Type.NATIVE) {
-            user = userRepository.findOneWithAuthoritiesByEmail(loginDto.getEmail());
-            authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
-        } else {
-            user = userRepository.findByOauthId(loginDto.getOauthId());
-            authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.getOauthId(), loginDto.getPassword());
-        }
+    public TokenDto login(@RequestBody LoginDto loginDto) {
+
+        User user = userRepository.findOneWithAuthoritiesByEmail(loginDto.getEmail());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
 
         if (user == null) {
             throw new BusinessException(ErrorCode.SIGNUP_EMAIL_NOT_EXIST);
@@ -86,11 +80,7 @@ public class UserService {
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
 
         //refreshToken은 DB에 저장
-        if (type == User.Type.NATIVE) {
-            refreshTokenRepository.save(refreshToken, principalDetails.getUser().getEmail());
-        } else {
-            refreshTokenRepository.save(refreshToken, principalDetails.getUser().getOauthId(), type);
-        }
+        refreshTokenRepository.save(refreshToken, principalDetails.getUser().getEmail());
 
         TokenDto tokenDto = new TokenDto(accessToken, refreshToken);
 

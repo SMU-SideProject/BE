@@ -32,11 +32,13 @@ public class OauthService {
 
         if (userRepository.findByOauthId(userDto.getId()) != null) {
             throw new BusinessException(ErrorCode.SIGNUP_USER_EXIST);
+        } else if (userRepository.findOneWithAuthoritiesByEmail(userDto.getEmail()) != null) {
+            throw new BusinessException(ErrorCode.SIGNUP_EMAIL_EXIST);
         }
 
         User user = User.builder()
                 .password(encoder.encode(userDto.getId())) //비번 임의로 지정
-                .nickname(userDto.getNickname())
+                .nickname(userDto.getNickname()+userDto.getId()) //일반 회원가입 한 회원이랑 닉네임이 겹치는 거 방지하기 위해 고유id추가
                 .email(userDto.getEmail())
                 .activated(true)
                 .type(userDto.getType())
@@ -51,9 +53,9 @@ public class OauthService {
     public TokenDto login(OauthInfo oauthInfo, User.Type type) {
         LoginDto loginDto = LoginDto.builder()
                 .password(oauthInfo.getId())
-                .oauthId(oauthInfo.getId())
+                .email(oauthInfo.getEmail())
                 .build();
-        return userService.login(loginDto, type);
+        return userService.login(loginDto);
 
     }
 

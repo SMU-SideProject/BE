@@ -63,7 +63,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenDto> postLogin(@Valid @RequestBody LoginDto loginDto) {
-        TokenDto tokenDto = userService.login(loginDto, User.Type.NATIVE);
+        TokenDto tokenDto = userService.login(loginDto);
         HttpHeaders httpHeaders = new HttpHeaders();
 
         return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
