@@ -1,5 +1,6 @@
 package com.seoulog.user.controller;
 
+import com.seoulog.common.annotation.CurrentUser;
 import com.seoulog.user.dto.AccessTokenDto;
 import com.seoulog.user.dto.LoginDto;
 import com.seoulog.user.oauth.OauthInfo;
@@ -91,5 +92,12 @@ public class UserController {
         userService.createCookie(tokenDto.getRefreshToken(), response);
 
         return new ResponseEntity<>(new AccessTokenDto(tokenDto.getAccessToken()), HttpStatus.OK);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@CurrentUser User user) {
+        //리프레시 토큰 삭제
+        userService.logout(user);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 }

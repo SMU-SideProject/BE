@@ -106,4 +106,8 @@ public class UserService {
     }
 
 
+    @Transactional
+    public void logout(User user) {
+        refreshTokenRepository.save(null, user.getEmail());
+    }
 }
