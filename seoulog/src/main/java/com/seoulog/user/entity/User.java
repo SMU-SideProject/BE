@@ -3,7 +3,9 @@ package com.seoulog.user.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-;
+;import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "`user`")
@@ -44,5 +46,8 @@ public class User {
 
     @Column
     private String oauthId;
+
+    @OneToMany(mappedBy = "user")
+    private List<UserTeam> teamList = new ArrayList<>();
 
 }
