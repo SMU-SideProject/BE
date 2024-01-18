@@ -1,6 +1,8 @@
 package com.seoulog.user.dto;
 
 import lombok.*;
+import net.minidev.json.JSONObject;
+
 
 @Getter
 @Setter
