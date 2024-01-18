@@ -2,11 +2,13 @@ package com.seoulog.user.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -29,7 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         String requestURI = request.getRequestURI();
-        final String authorizationHeader = request.getHeader("Authorization");
+        final String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
         String accessToken = resolveToken(authorizationHeader);
 
         if (StringUtils.hasText(accessToken) && tokenProvider.validateToken(accessToken).equals("ACCESS")) { //토큰 검증
@@ -37,9 +39,16 @@ public class JwtFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } else if (StringUtils.hasText(accessToken) && tokenProvider.validateToken(accessToken).equals("Expired")) {
             String refreshToken = null;
-            if (StringUtils.hasText(request.getHeader("Auth"))) { // Auth에는 email 담겨 있음
-                String email = request.getHeader("Auth");
-                refreshToken = tokenProvider.getRefreshToken(email); // userId로 refreshToken 조회
+            refreshToken = getRefreshToken(request, refreshToken);
+                //refreshToken 검증
+            if (StringUtils.hasText(refreshToken) && tokenProvider.validateToken(refreshToken).equals("ACCESS")) {
+
+                // access token 재발급
+                Authentication authentication = tokenProvider.getAuthentication(refreshToken);
+                String newAccessToken = tokenProvider.createAccessToken(authentication);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                response.setHeader(HttpHeaders.AUTHORIZATION, newAccessToken);
             }
         } else {
                 logger.debug("유효한 JWT 토큰이 없습니다, uri: {}", requestURI);
@@ -54,6 +63,16 @@ public class JwtFilter extends OncePerRequestFilter {
             return token.substring(7);
         }
         return null;
+    }
+
+    private String getRefreshToken(HttpServletRequest request, String refreshToken) {
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("refresh-token")) {
+                refreshToken = cookie.getValue();
+            }
+        }
+        return refreshToken;
     }
 
 }
