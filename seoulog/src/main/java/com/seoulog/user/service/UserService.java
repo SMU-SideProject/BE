@@ -102,8 +102,8 @@ public class UserService {
         String cookieName = "refresh-token";
         return ResponseCookie.from(cookieName, refreshToken)
                 .path("/")
-                .httpOnly(false)
-                .secure(false)
+                .httpOnly(true)
+                .secure(true)
                 .sameSite("None")
                 .build();
     }
