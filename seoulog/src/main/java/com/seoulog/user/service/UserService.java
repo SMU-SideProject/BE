@@ -1,5 +1,6 @@
 package com.seoulog.user.service;
 
+import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import com.seoulog.common.error.BusinessException;
 import com.seoulog.common.error.ErrorCode;
 import com.seoulog.user.config.auth.PrincipalDetails;
@@ -10,7 +11,10 @@ import com.seoulog.user.entity.User;
 import com.seoulog.user.jwt.TokenProvider;
 import com.seoulog.user.repository.RefreshTokenRepository;
 import com.seoulog.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -88,14 +92,17 @@ public class UserService {
         return tokenDto;
 
     }
-    public ResponseCookie createCookie(String refreshToken) {
+    public void createCookie(String refreshToken, HttpServletResponse response) {
         String cookieName = "refresh-token";
-        return ResponseCookie.from(cookieName, refreshToken)
+        ResponseCookie responseCookie = ResponseCookie.from(cookieName, refreshToken)
                 .path("/")
                 .httpOnly(false)
-                .secure(false)
+                .secure(true)
                 .sameSite("None")
+                .maxAge((60 * 1000) * 60 * 24 * 7)
                 .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
     }
 
 

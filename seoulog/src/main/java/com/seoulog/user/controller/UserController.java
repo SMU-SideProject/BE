@@ -14,6 +14,7 @@ import com.seoulog.user.entity.User;
 import com.seoulog.user.jwt.TokenProvider;
 import com.seoulog.user.repository.UserRepository;
 import com.seoulog.user.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
@@ -64,35 +65,31 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AccessTokenDto> postLogin(@Valid @RequestBody LoginDto loginDto) {
+    public ResponseEntity<AccessTokenDto> postLogin(@Valid @RequestBody LoginDto loginDto, HttpServletResponse response) {
         TokenDto tokenDto = userService.login(loginDto);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("Set-Cookie", userService.createCookie(tokenDto.getRefreshToken()).toString());
-        return new ResponseEntity<>(new AccessTokenDto(tokenDto.getAccessToken()), httpHeaders, HttpStatus.OK);
+        userService.createCookie(tokenDto.getRefreshToken(), response);
+        return new ResponseEntity<>(new AccessTokenDto(tokenDto.getAccessToken()), HttpStatus.OK);
     }
 
     @PostMapping("/login/naver")
-    public ResponseEntity<AccessTokenDto> navreLogin(@RequestParam String code) {
+    public ResponseEntity<AccessTokenDto> navreLogin(@RequestParam String code, HttpServletResponse response) {
         //refresh토큰 저장
         naverLoginRequest.setAuthorizationCode(code);
         OauthInfo naverInfo = naverOauthService.getNaverLoginInfo(naverLoginRequest);
-
-        HttpHeaders httpHeaders = new HttpHeaders();
         TokenDto tokenDto = oauthService.login(naverInfo, naverInfo.getType());
-        httpHeaders.set("Set-Cookie", userService.createCookie(tokenDto.getRefreshToken()).toString());
+        userService.createCookie(tokenDto.getRefreshToken(), response);
 
-        return new ResponseEntity<>(new AccessTokenDto(tokenDto.getAccessToken()), httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(new AccessTokenDto(tokenDto.getAccessToken()), HttpStatus.OK);
     }
 
     @PostMapping("/login/kakao")
-    public ResponseEntity<AccessTokenDto> kakaoLogin(@RequestParam String code) {
+    public ResponseEntity<AccessTokenDto> kakaoLogin(@RequestParam String code, HttpServletResponse response) {
         kakaoLoginRequest.setAuthorizationCode(code);
         //refresh토큰 저장
         OauthInfo kakaoInfo = kakaoOauthService.getKakaoLoginInfo(kakaoLoginRequest);
-        HttpHeaders httpHeaders = new HttpHeaders();
         TokenDto tokenDto = oauthService.login(kakaoInfo, kakaoInfo.getType());
-        httpHeaders.set("Set-Cookie", userService.createCookie(tokenDto.getRefreshToken()).toString());
+        userService.createCookie(tokenDto.getRefreshToken(), response);
 
-        return new ResponseEntity<>(new AccessTokenDto(tokenDto.getAccessToken()), httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(new AccessTokenDto(tokenDto.getAccessToken()), HttpStatus.OK);
     }
 }
