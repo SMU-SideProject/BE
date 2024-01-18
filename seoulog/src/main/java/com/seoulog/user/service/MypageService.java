@@ -1,21 +1,18 @@
 package com.seoulog.user.service;
 
+import com.seoulog.common.error.BusinessException;
+import com.seoulog.common.error.ErrorCode;
 import com.seoulog.user.dto.MypageResponseDto;
 import com.seoulog.user.dto.TeamDto;
 import com.seoulog.user.dto.UserDto;
-import com.seoulog.user.entity.Team;
 import com.seoulog.user.entity.User;
 import com.seoulog.user.entity.UserTeam;
-import com.seoulog.user.repository.TeamRepository;
 import com.seoulog.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,8 +20,20 @@ import java.util.List;
 public class MypageService {
 
     private final UserRepository userRepository;
-    private final TeamRepository teamRepository;
-    private final ArrayList<Team> teamNameList = new ArrayList<>();
+    PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
+    @Transactional
+    public void updateUserInfo(User user, UserDto userDto) {
+
+        if (userDto.getNickname().isBlank()) {
+            throw new BusinessException(ErrorCode.SIGNUP_NICKNAME_EMPTY);
+        } else if (user.getNickname().equals(userDto.getNickname())) {
+            throw new BusinessException(ErrorCode.SIGNUP_REDUNDANT_NICKNAME);
+        }
+        User updateUser = userRepository.findOneWithAuthoritiesByEmail(user.getEmail());
+        updateUser.updateUserInfo(userDto.getNickname(), encoder.encode(userDto.getPassword())); //더티체킹
+
+    }
 
     @Transactional
     public MypageResponseDto getUserInfo(User user, MypageResponseDto mypageResponseDto) {

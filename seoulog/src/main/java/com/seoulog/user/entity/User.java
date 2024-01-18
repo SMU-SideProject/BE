@@ -4,13 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 
 ;import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Table(name = "`user`")
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -49,5 +47,11 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<UserTeam> teamList = new ArrayList<>();
+
+    public void updateUserInfo(String nickname, String password) {
+        this.nickname = nickname;
+        this.password = password;
+
+    }
 
 }
