@@ -1,5 +1,6 @@
 package com.seoulog.user.service;
 
+import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import com.seoulog.common.error.BusinessException;
 import com.seoulog.common.error.ErrorCode;
 import com.seoulog.user.config.auth.PrincipalDetails;
@@ -10,7 +11,10 @@ import com.seoulog.user.entity.User;
 import com.seoulog.user.jwt.TokenProvider;
 import com.seoulog.user.repository.RefreshTokenRepository;
 import com.seoulog.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -22,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.net.http.HttpResponse;
 import java.util.regex.Pattern;
 
 @Service
@@ -61,7 +66,7 @@ public class UserService {
     }
 
     @Transactional
-    public TokenDto login(@RequestBody LoginDto loginDto, User.Type type) {
+    public TokenDto login(@RequestBody LoginDto loginDto, User.Type type ) {
         User user;
         UsernamePasswordAuthenticationToken authenticationToken = null;
         if (type == User.Type.NATIVE) {
@@ -98,14 +103,17 @@ public class UserService {
         return tokenDto;
 
     }
-    public ResponseCookie createCookie(String refreshToken) {
+    public void createCookie(String refreshToken, HttpServletResponse response) {
         String cookieName = "refresh-token";
-        return ResponseCookie.from(cookieName, refreshToken)
+        ResponseCookie responseCookie = ResponseCookie.from(cookieName, refreshToken)
                 .path("/")
                 .httpOnly(false)
-                .secure(false)
+                .secure(true)
                 .sameSite("None")
+                .maxAge((60 * 1000) * 60 * 24 * 7)
                 .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
     }
 
 
