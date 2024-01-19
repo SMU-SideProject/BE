@@ -4,6 +4,7 @@ import com.seoulog.user.oauth.OauthInfo;
 import com.seoulog.user.dto.UserDto;
 import com.seoulog.user.entity.User;
 import lombok.Data;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -16,6 +17,7 @@ import java.util.Map;
 // 시큐리티가 /login 주소 요청이 오면 낚아채서 로그인 진행
 // 로그인 진행이 완료되면 시큐리티 session을 만들어 준다 (같은 세션인데 시큐리티 자신만의 세션을 저장, Security ContextHolder 라는 키 값에 세션 정보 저장)
 @Data
+@Getter
 public class PrincipalDetails implements UserDetails, OAuth2User {
 
     private UserDto userDto;
@@ -59,7 +61,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 
     @Override
     public String getUsername() {
-        return user.getNickname();
+        return user.getEmail();
     }
 
     @Override
