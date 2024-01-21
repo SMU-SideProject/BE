@@ -15,6 +15,7 @@ import com.seoulog.user.entity.User;
 import com.seoulog.user.jwt.TokenProvider;
 import com.seoulog.user.repository.UserRepository;
 import com.seoulog.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -95,9 +96,9 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(@CurrentUser User user) {
+    public ResponseEntity<String> logout(@CurrentUser User user, HttpServletRequest request, HttpServletResponse response) {
         //리프레시 토큰 삭제
-        userService.logout(user);
+        userService.logout(user, response);
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 }

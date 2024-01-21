@@ -11,6 +11,8 @@ import com.seoulog.user.entity.User;
 import com.seoulog.user.jwt.TokenProvider;
 import com.seoulog.user.repository.RefreshTokenRepository;
 import com.seoulog.user.repository.UserRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -38,6 +40,7 @@ public class UserService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final String regx = "^(.+)@(.+)$";
     private final Pattern pattern = Pattern.compile(regx);
+    private final String COOKIE_NAME = "refresh-token";
     PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     @Transactional
@@ -93,8 +96,7 @@ public class UserService {
 
     }
     public void createCookie(String refreshToken, HttpServletResponse response) {
-        String cookieName = "refresh-token";
-        ResponseCookie responseCookie = ResponseCookie.from(cookieName, refreshToken)
+        ResponseCookie responseCookie = ResponseCookie.from(COOKIE_NAME, refreshToken)
                 .path("/")
                 .httpOnly(false)
                 .secure(true)
@@ -105,9 +107,23 @@ public class UserService {
         response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
     }
 
+    public void deleteCookie(HttpServletResponse response) {
+
+        ResponseCookie deleteCookie = ResponseCookie.from(COOKIE_NAME, "")
+                .path("/")
+                .httpOnly(false)
+                .secure(true)
+                .sameSite("None")
+                .maxAge(0)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
+    }
+
 
     @Transactional
-    public void logout(User user) {
+    public void logout(User user, HttpServletResponse response) {
+        deleteCookie(response);
         refreshTokenRepository.save(null, user.getEmail());
     }
 }
