@@ -23,7 +23,15 @@ public enum ErrorCode {
     SIGNUP_USER_EXIST(HttpStatus.BAD_REQUEST, "이미 가입된 회원입니다."),
 
     //file err
-    TOO_MANY_IMAGES(HttpStatus.BAD_REQUEST, "최대 이미지 수를 초과하였습니다.")
+    TOO_MANY_IMAGES(HttpStatus.BAD_REQUEST, "최대 이미지 수를 초과하였습니다."),
+
+    //jwt error
+    INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않는 엑세스 토큰입니다."),
+    EXPIRED_TOKEN(HttpStatus.BAD_REQUEST, "만료된 엑세스 토큰입니다."),
+    USERNAME_NOT_FOUND(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."),
+    UNSUPPORTED_TOKEN(HttpStatus.BAD_REQUEST, "지원되지 않는 엑세스 토큰입니다."),
+    WRONG_TYPE_TOKEN(HttpStatus.BAD_REQUEST, "JWT 토큰이 잘못되었습니다."),
+    TOKEN_EMPTY(HttpStatus.BAD_REQUEST, "로그아웃한 회원입니다.")
     ;
 
     private final HttpStatus status;

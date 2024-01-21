@@ -45,14 +45,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 // token을 사용하는 방식이기 때문에 csrf를 disable합니다.
-                .csrf(csrf -> csrf.disable())
-
-//                .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(exceptionHandling -> exceptionHandling
-                        //우리가 만든 401, 403에러
-                        .accessDeniedHandler(jwtAccessDeniedHandler)
-                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                );
+                .csrf(csrf -> csrf.disable());
 
         http.cors(Customizer.withDefaults());
 

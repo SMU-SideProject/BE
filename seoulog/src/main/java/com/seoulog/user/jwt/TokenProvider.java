@@ -1,5 +1,7 @@
 package com.seoulog.user.jwt;
 
+import com.seoulog.common.error.BusinessException;
+import com.seoulog.common.error.ErrorCode;
 import com.seoulog.user.propertySourceFactory.YamlPropertySourceFactory;
 import com.seoulog.user.repository.RefreshTokenRepository;
 import com.seoulog.user.service.CustomUserDetailsService;
@@ -27,6 +29,7 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -85,7 +88,6 @@ public class TokenProvider implements InitializingBean{
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        System.out.println("claims = " + claims);
 
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
@@ -103,15 +105,19 @@ public class TokenProvider implements InitializingBean{
             return "ACCESS";
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("잘못된 JWT 서명입니다.");
+            throw new BusinessException(ErrorCode.INVALID_TOKEN);
         } catch (ExpiredJwtException e) {
             log.info("만료된 JWT 토큰입니다.");
             return "Expired";
         } catch (UnsupportedJwtException e) {
             log.info("지원되지 않는 JWT 토큰입니다.");
+            throw new BusinessException(ErrorCode.UNSUPPORTED_TOKEN);
         } catch (IllegalArgumentException e) {
             log.info("JWT 토큰이 잘못되었습니다.");
+            throw new BusinessException(ErrorCode.WRONG_TYPE_TOKEN);
+        } catch (NoSuchElementException e) {
+            throw new BusinessException(ErrorCode.USERNAME_NOT_FOUND);
         }
-        return null;
     }
 
     public String createAccessToken(Authentication authentication) {

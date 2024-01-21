@@ -24,8 +24,9 @@ public class MypageService {
 
     @Transactional
     public void updateUserInfo(User user, UserDto userDto) {
-
-        if (userDto.getNickname().isBlank()) {
+        if (userRepository.findOneWithAuthoritiesByEmail(user.getEmail()).getRefreshToken() == null) {
+            throw new BusinessException(ErrorCode.TOKEN_EMPTY);
+        } else if (userDto.getNickname().isBlank()) {
             throw new BusinessException(ErrorCode.SIGNUP_NICKNAME_EMPTY);
         } else if (user.getNickname().equals(userDto.getNickname())) {
             throw new BusinessException(ErrorCode.SIGNUP_REDUNDANT_NICKNAME);
@@ -37,6 +38,11 @@ public class MypageService {
 
     @Transactional
     public MypageResponseDto getUserInfo(User user, MypageResponseDto mypageResponseDto) {
+        if (userRepository.findOneWithAuthoritiesByEmail(user.getEmail()).getRefreshToken() == null) {
+            throw new BusinessException(ErrorCode.TOKEN_EMPTY);
+        } else if (userRepository.findOneWithAuthoritiesByEmail(user.getEmail()).getRefreshToken() == null) {
+            throw new BusinessException(ErrorCode.TOKEN_EMPTY);
+        }
         UserDto userDto = UserDto.builder()
                 .nickname(user.getNickname())
                 .email(user.getEmail())

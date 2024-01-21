@@ -1,5 +1,7 @@
 package com.seoulog.user.jwt;
 
+import com.seoulog.common.error.BusinessException;
+import com.seoulog.common.error.ErrorCode;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -51,7 +53,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 response.setHeader(HttpHeaders.AUTHORIZATION, newAccessToken);
             }
         } else {
-                logger.debug("유효한 JWT 토큰이 없습니다, uri: {}", requestURI);
+            throw new BusinessException(ErrorCode.TOKEN_EMPTY);
         }
 
         filterChain.doFilter(request, response);
@@ -74,7 +76,6 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         return refreshToken;
     }
-
 }
 
 
