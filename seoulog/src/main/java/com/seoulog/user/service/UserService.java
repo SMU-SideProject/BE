@@ -11,8 +11,6 @@ import com.seoulog.user.entity.User;
 import com.seoulog.user.jwt.TokenProvider;
 import com.seoulog.user.repository.RefreshTokenRepository;
 import com.seoulog.user.repository.UserRepository;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -28,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.net.http.HttpResponse;
 import java.util.regex.Pattern;
 
 @Service
