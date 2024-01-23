@@ -20,11 +20,12 @@ public class PreSignedUrlService {
 
     private final AmazonS3 amazonS3;
 
-    public String getPreSignedUrl(String prefix, String fileName) {
+    public String makePreSignedUrl(String prefix, String fileName) {
         fileName = createPath(prefix, fileName);
 
         GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratedPreSignedUrlRequest(bucket, fileName);
         URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
+
         return url.toString();
     }
 
@@ -49,12 +50,11 @@ public class PreSignedUrlService {
         return expiration;
     }
 
-    private String createFileId() {
+    public String createFileId() {
         return UUID.randomUUID().toString();
     }
 
     private String createPath(String prefix, String fileName) {
-        String fileId = createFileId();
-        return String.format("%s/%s", prefix, fileId + fileName);
+        return String.format("%s/%s", prefix, fileName);
     }
 }

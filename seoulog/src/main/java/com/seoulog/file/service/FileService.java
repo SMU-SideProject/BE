@@ -5,7 +5,8 @@ import com.seoulog.common.error.ErrorCode;
 import com.seoulog.file.dto.PreSignedUrlsDto;
 import com.seoulog.file.dto.UploadFilesDto;
 import com.seoulog.file.util.Validator;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +18,18 @@ public class FileService {
     private final PreSignedUrlService preSignedUrlService;
 
     public PreSignedUrlsDto getPreSignedUrls(UploadFilesDto uploadFilesDto) {
+        Map<String, String> preSignedUrls = new HashMap<>();
+
         if(Validator.isNumberOfImagesUnderFifteen(uploadFilesDto)) {
-            List<String> preSignedUrls =
-                    uploadFilesDto.getImages().stream()
-                            .map(i -> preSignedUrlService.getPreSignedUrl(path, i))
-                            .toList();
+            uploadFilesDto.getImages()
+                    .forEach(i -> {
+                        String fileId = preSignedUrlService.createFileId();
+
+                        preSignedUrls.put(
+                                fileId,
+                                preSignedUrlService.makePreSignedUrl(path, fileId + i)
+                        );
+                    });
 
             return new PreSignedUrlsDto(preSignedUrls);
         }
