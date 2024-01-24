@@ -10,12 +10,10 @@ import lombok.*;
 public class Team {
 
     @Id
-    @Column(name = "team_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long teamId;
 
     @Getter
-    @Column(name = "team_name")
     private String teamName;
 
 }

@@ -6,7 +6,6 @@ import com.seoulog.user.dto.UserDto;
 import com.seoulog.user.entity.User;
 import com.seoulog.user.service.MypageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +26,7 @@ public class MypageController {
         MypageResponseDto mypageResponseDto = new MypageResponseDto();
         mypageService.getUserInfo(user, mypageResponseDto);
         mypageService.getTeamList(user, mypageResponseDto);
-        return new ResponseEntity<>(mypageResponseDto, HttpStatus.OK);
+        return ResponseEntity.ok(mypageResponseDto);
     }
 
     /**
@@ -36,6 +35,6 @@ public class MypageController {
     @PatchMapping("/mypage")
     public ResponseEntity<String> updateUserInfo(@CurrentUser User user, @RequestBody UserDto userDto) {
         mypageService.updateUserInfo(user, userDto);
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 }

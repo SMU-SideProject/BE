@@ -1,7 +1,7 @@
 package com.seoulog.user.controller;
 
 import com.seoulog.common.annotation.CurrentUser;
-import com.seoulog.user.dto.AccessTokenDto;
+import com.seoulog.common.tokenDto.AccessTokenDto;
 import com.seoulog.user.dto.LoginDto;
 import com.seoulog.user.oauth.OauthInfo;
 import com.seoulog.user.oauth.OauthService;
@@ -9,35 +9,22 @@ import com.seoulog.user.oauth.kakao.KakaoLoginRequest;
 import com.seoulog.user.oauth.kakao.KakaoOauthService;
 import com.seoulog.user.oauth.naver.NaverLoginRequest;
 import com.seoulog.user.oauth.naver.NaverOauthService;
-import com.seoulog.user.dto.TokenDto;
+import com.seoulog.common.tokenDto.TokenDto;
 import com.seoulog.user.dto.UserDto;
 import com.seoulog.user.entity.User;
-import com.seoulog.user.jwt.TokenProvider;
-import com.seoulog.user.repository.UserRepository;
 import com.seoulog.user.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import net.minidev.json.JSONObject;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 
-
-    private final TokenProvider tokenProvider;
     private final UserService userService;
-    private final UserRepository userRepository;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final NaverOauthService naverOauthService;
     private final KakaoOauthService kakaoOauthService;
     private final OauthService oauthService;
@@ -49,7 +36,7 @@ public class UserController {
             @Valid @RequestBody UserDto userDto
     ) {
         userService.signup(userDto);
-        return ResponseEntity.ok(null); //UserDto를 파라미터로 받아서 회원가입
+        return ResponseEntity.ok().build(); //UserDto를 파라미터로 받아서 회원가입
     }
 
     @PostMapping("/signup/naver")
@@ -70,7 +57,7 @@ public class UserController {
     public ResponseEntity<AccessTokenDto> postLogin(@Valid @RequestBody LoginDto loginDto, HttpServletResponse response) {
         TokenDto tokenDto = userService.login(loginDto);
         userService.createCookie(tokenDto.getRefreshToken(), response);
-        return new ResponseEntity<>(new AccessTokenDto(tokenDto.getAccessToken()), HttpStatus.OK);
+        return ResponseEntity.ok(new AccessTokenDto(tokenDto.getAccessToken()));
     }
 
     @PostMapping("/login/naver")
@@ -81,7 +68,7 @@ public class UserController {
         TokenDto tokenDto = oauthService.login(naverInfo, naverInfo.getType());
         userService.createCookie(tokenDto.getRefreshToken(), response);
 
-        return new ResponseEntity<>(new AccessTokenDto(tokenDto.getAccessToken()), HttpStatus.OK);
+        return ResponseEntity.ok(new AccessTokenDto(tokenDto.getAccessToken()));
     }
 
     @PostMapping("/login/kakao")
@@ -92,13 +79,13 @@ public class UserController {
         TokenDto tokenDto = oauthService.login(kakaoInfo, kakaoInfo.getType());
         userService.createCookie(tokenDto.getRefreshToken(), response);
 
-        return new ResponseEntity<>(new AccessTokenDto(tokenDto.getAccessToken()), HttpStatus.OK);
+        return ResponseEntity.ok(new AccessTokenDto(tokenDto.getAccessToken()));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(@CurrentUser User user, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<String> logout(@CurrentUser User user, HttpServletResponse response) {
         //리프레시 토큰 삭제
         userService.logout(user, response);
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 }

@@ -1,4 +1,4 @@
-package com.seoulog.user.jwt;
+package com.seoulog.common.jwt;
 
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

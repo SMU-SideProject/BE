@@ -3,7 +3,7 @@ package com.seoulog.user.oauth.naver;
 import com.seoulog.user.oauth.OauthApiClient;
 import com.seoulog.user.oauth.OauthInfo;
 import com.seoulog.user.oauth.OauthProfileResponse;
-import com.seoulog.user.dto.TokenDto;
+import com.seoulog.common.tokenDto.TokenDto;
 import com.seoulog.user.repository.UserRepository;
 import com.seoulog.user.service.UserService;
 import lombok.RequiredArgsConstructor;

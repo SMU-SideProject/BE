@@ -17,6 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MypageService {
 
     private final UserRepository userRepository;
@@ -36,7 +37,6 @@ public class MypageService {
 
     }
 
-    @Transactional
     public MypageResponseDto getUserInfo(User user, MypageResponseDto mypageResponseDto) {
         if (userRepository.findOneWithAuthoritiesByEmail(user.getEmail()).getRefreshToken() == null) {
             throw new BusinessException(ErrorCode.TOKEN_EMPTY);
@@ -53,7 +53,6 @@ public class MypageService {
 
     }
 
-    @Transactional
     public MypageResponseDto getTeamList(User user, MypageResponseDto mypageResponseDto) {
         User findUser = userRepository.findByNickname(user.getNickname());
         List<UserTeam> userTeams = findUser.getTeamList();

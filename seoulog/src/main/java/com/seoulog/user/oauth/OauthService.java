@@ -3,7 +3,7 @@ package com.seoulog.user.oauth;
 import com.seoulog.common.error.BusinessException;
 import com.seoulog.common.error.ErrorCode;
 import com.seoulog.user.dto.LoginDto;
-import com.seoulog.user.dto.TokenDto;
+import com.seoulog.common.tokenDto.TokenDto;
 import com.seoulog.user.entity.User;
 import com.seoulog.user.oauth.kakao.KakaoOauthService;
 import com.seoulog.user.oauth.naver.NaverOauthService;
@@ -15,8 +15,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.UUID;
 
 
 @Service

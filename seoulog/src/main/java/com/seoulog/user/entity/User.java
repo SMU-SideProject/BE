@@ -15,26 +15,22 @@ import java.util.List;
 public class User {
 
     @Id
-    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(name = "password", length = 100, nullable = false)
+    @Column(length = 100, nullable = false)
     private String password;
 
-    @Column(name = "nickname", length = 50, nullable = false)
+    @Column(length = 50, nullable = false)
     private String nickname;
 
-    @Column(name = "activated") //탈퇴시 false
+    //탈퇴시 false
     private boolean activated;
 
-    @Column
     private String email;
 
-    @Column(name = "refresh_token")
     private String refreshToken;
 
-    @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private Type type;
 
@@ -42,7 +38,6 @@ public class User {
         NATIVE, NAVER, KAKAO
     }
 
-    @Column
     private String oauthId;
 
     @OneToMany(mappedBy = "user")
@@ -52,6 +47,10 @@ public class User {
         this.nickname = nickname;
         this.password = password;
 
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
 }

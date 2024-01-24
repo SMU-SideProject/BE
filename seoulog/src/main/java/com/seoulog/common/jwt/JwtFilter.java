@@ -1,4 +1,4 @@
-package com.seoulog.user.jwt;
+package com.seoulog.common.jwt;
 
 import com.seoulog.common.error.BusinessException;
 import com.seoulog.common.error.ErrorCode;
@@ -24,6 +24,8 @@ public class JwtFilter extends OncePerRequestFilter {
     private final int tokenValidityInMilliseconds = 86400;
     private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
     public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String BEARER = "Bearer ";
+    public static final String COOKIE_NAME = "refresh-token";
     private final TokenProvider tokenProvider;
 
     public JwtFilter(TokenProvider tokenProvider) {
@@ -61,7 +63,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
 
     private String resolveToken(String token) {
-        if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
+        if (StringUtils.hasText(token) && token.startsWith(BEARER)) {
             return token.substring(7);
         }
         return null;
@@ -70,7 +72,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private String getRefreshToken(HttpServletRequest request, String refreshToken) {
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("refresh-token")) {
+            if (cookie.getName().equals(COOKIE_NAME)) {
                 refreshToken = cookie.getValue();
             }
         }

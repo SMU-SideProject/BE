@@ -1,9 +1,7 @@
 package com.seoulog.common.config;
 
-import com.seoulog.user.exception.JwtAccessDeniedHandler;
-import com.seoulog.user.exception.JwtAuthenticationEntryPoint;
-import com.seoulog.user.jwt.JwtSecurityConfig;
-import com.seoulog.user.jwt.TokenProvider;
+import com.seoulog.common.jwt.JwtSecurityConfig;
+import com.seoulog.common.jwt.TokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -26,14 +24,9 @@ public class SecurityConfig {
     //TokenProvider 주입 받아서 JwtFilter를 통해 Security 로직에 필터 등록
 
     private final TokenProvider tokenProvider;
-    //    private final CorsFilter corsFilter;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
-    public SecurityConfig(TokenProvider tokenProvider, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, JwtAccessDeniedHandler jwtAccessDeniedHandler) {
+    public SecurityConfig(TokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
-        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
-        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
 
     }
     @Bean

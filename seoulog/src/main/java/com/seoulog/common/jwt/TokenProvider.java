@@ -1,14 +1,12 @@
-package com.seoulog.user.jwt;
+package com.seoulog.common.jwt;
 
 import com.seoulog.common.error.BusinessException;
 import com.seoulog.common.error.ErrorCode;
 import com.seoulog.user.propertySourceFactory.YamlPropertySourceFactory;
-import com.seoulog.user.repository.RefreshTokenRepository;
 import com.seoulog.user.service.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,14 +14,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -42,7 +38,6 @@ public class TokenProvider implements InitializingBean{
     private final String secret;
     private final long tokenValidityInMilliseconds;
 
-    private RefreshTokenRepository refreshTokenRepository;
     private final long refreshTokenValidTime = (60 * 1000) * 60 * 24 * 7; // 7일
     private CustomUserDetailsService customUserDetailsService;
     private Key key;
@@ -50,11 +45,9 @@ public class TokenProvider implements InitializingBean{
     public TokenProvider(
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds,
-            RefreshTokenRepository refreshTokenRepository,
             @Lazy CustomUserDetailsService customUserDetailsService) {
         this.secret = secret;
         this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
-        this.refreshTokenRepository = refreshTokenRepository;
         this.customUserDetailsService = customUserDetailsService;
     }
 
@@ -127,10 +120,10 @@ public class TokenProvider implements InitializingBean{
     public String createRefreshToken(Authentication authentication) {
         return createToken(authentication, refreshTokenValidTime);
     }
-    @Transactional(readOnly = true)
-    public String getRefreshToken(String email) {
-        String refreshToken = refreshTokenRepository.findByEmail(email).getRefreshToken();
-        return refreshToken;
-
-    }
+//    @Transactional(readOnly = true)
+//    public String getRefreshToken(String email) {
+//        String refreshToken = refreshTokenRepository.findByEmail(email).getRefreshToken();
+//        return refreshToken;
+//
+//    }
 }

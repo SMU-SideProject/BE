@@ -1,20 +1,16 @@
 package com.seoulog.user.service;
 
-import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import com.seoulog.common.error.BusinessException;
 import com.seoulog.common.error.ErrorCode;
-import com.seoulog.user.config.auth.PrincipalDetails;
 import com.seoulog.user.dto.LoginDto;
-import com.seoulog.user.dto.TokenDto;
+import com.seoulog.common.tokenDto.TokenDto;
 import com.seoulog.user.dto.UserDto;
 import com.seoulog.user.entity.User;
-import com.seoulog.user.jwt.TokenProvider;
-import com.seoulog.user.repository.RefreshTokenRepository;
+import com.seoulog.common.jwt.TokenProvider;
 import com.seoulog.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -26,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.net.http.HttpResponse;
 import java.util.regex.Pattern;
 
 @Service
@@ -36,7 +31,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final String regx = "^(.+)@(.+)$";
     private final Pattern pattern = Pattern.compile(regx);
     private final String COOKIE_NAME = "refresh-token";
@@ -84,10 +78,8 @@ public class UserService {
         String accessToken = tokenProvider.createAccessToken(authentication);
         String refreshToken = tokenProvider.createRefreshToken(authentication);
 
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-
         //refreshToken은 DB에 저장
-        refreshTokenRepository.save(refreshToken, principalDetails.getUser().getEmail());
+        user.updateRefreshToken(refreshToken);
 
         TokenDto tokenDto = new TokenDto(accessToken, refreshToken);
 
@@ -123,6 +115,7 @@ public class UserService {
     @Transactional
     public void logout(User user, HttpServletResponse response) {
         deleteCookie(response);
-        refreshTokenRepository.save(null, user.getEmail());
+        User logoutUser = userRepository.findOneWithAuthoritiesByEmail(user.getEmail());
+        logoutUser.updateRefreshToken(null);
     }
 }

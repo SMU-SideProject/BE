@@ -1,4 +1,4 @@
-package com.seoulog.user.jwt;
+package com.seoulog.common.jwt;
 
 import com.seoulog.common.error.BusinessException;
 import com.seoulog.common.error.ErrorCode;
