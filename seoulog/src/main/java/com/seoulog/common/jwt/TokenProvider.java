@@ -120,10 +120,5 @@ public class TokenProvider implements InitializingBean{
     public String createRefreshToken(Authentication authentication) {
         return createToken(authentication, refreshTokenValidTime);
     }
-//    @Transactional(readOnly = true)
-//    public String getRefreshToken(String email) {
-//        String refreshToken = refreshTokenRepository.findByEmail(email).getRefreshToken();
-//        return refreshToken;
-//
-//    }
+
 }
