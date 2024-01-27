@@ -1,20 +1,16 @@
 package com.seoulog.user.service;
 
-import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import com.seoulog.common.error.BusinessException;
 import com.seoulog.common.error.ErrorCode;
-import com.seoulog.user.config.auth.PrincipalDetails;
 import com.seoulog.user.dto.LoginDto;
-import com.seoulog.user.dto.TokenDto;
+import com.seoulog.common.tokenDto.TokenDto;
 import com.seoulog.user.dto.UserDto;
 import com.seoulog.user.entity.User;
-import com.seoulog.user.jwt.TokenProvider;
-import com.seoulog.user.repository.RefreshTokenRepository;
+import com.seoulog.common.jwt.TokenProvider;
 import com.seoulog.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -26,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.net.http.HttpResponse;
 import java.util.regex.Pattern;
 
 @Service
@@ -36,9 +31,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final String regx = "^(.+)@(.+)$";
     private final Pattern pattern = Pattern.compile(regx);
+    private final String COOKIE_NAME = "refresh-token";
     PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     @Transactional
@@ -66,16 +61,10 @@ public class UserService {
     }
 
     @Transactional
-    public TokenDto login(@RequestBody LoginDto loginDto, User.Type type ) {
-        User user;
-        UsernamePasswordAuthenticationToken authenticationToken = null;
-        if (type == User.Type.NATIVE) {
-            user = userRepository.findOneWithAuthoritiesByEmail(loginDto.getEmail());
-            authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
-        } else {
-            user = userRepository.findByOauthId(loginDto.getOauthId());
-            authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.getOauthId(), loginDto.getPassword());
-        }
+    public TokenDto login(@RequestBody LoginDto loginDto) {
+
+        User user = userRepository.findOneWithAuthoritiesByEmail(loginDto.getEmail());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
 
         if (user == null) {
             throw new BusinessException(ErrorCode.SIGNUP_EMAIL_NOT_EXIST);
@@ -89,14 +78,8 @@ public class UserService {
         String accessToken = tokenProvider.createAccessToken(authentication);
         String refreshToken = tokenProvider.createRefreshToken(authentication);
 
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-
         //refreshToken은 DB에 저장
-        if (type == User.Type.NATIVE) {
-            refreshTokenRepository.save(refreshToken, principalDetails.getUser().getEmail());
-        } else {
-            refreshTokenRepository.save(refreshToken, principalDetails.getUser().getOauthId(), type);
-        }
+        user.updateRefreshToken(refreshToken);
 
         TokenDto tokenDto = new TokenDto(accessToken, refreshToken);
 
@@ -104,8 +87,7 @@ public class UserService {
 
     }
     public void createCookie(String refreshToken, HttpServletResponse response) {
-        String cookieName = "refresh-token";
-        ResponseCookie responseCookie = ResponseCookie.from(cookieName, refreshToken)
+        ResponseCookie responseCookie = ResponseCookie.from(COOKIE_NAME, refreshToken)
                 .path("/")
                 .httpOnly(false)
                 .secure(true)
@@ -116,5 +98,24 @@ public class UserService {
         response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
     }
 
+    public void deleteCookie(HttpServletResponse response) {
 
+        ResponseCookie deleteCookie = ResponseCookie.from(COOKIE_NAME, "")
+                .path("/")
+                .httpOnly(false)
+                .secure(true)
+                .sameSite("None")
+                .maxAge(0)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
+    }
+
+
+    @Transactional
+    public void logout(User user, HttpServletResponse response) {
+        deleteCookie(response);
+        User logoutUser = userRepository.findOneWithAuthoritiesByEmail(user.getEmail());
+        logoutUser.updateRefreshToken(null);
+    }
 }

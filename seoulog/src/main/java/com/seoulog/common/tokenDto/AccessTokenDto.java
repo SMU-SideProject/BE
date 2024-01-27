@@ -1,4 +1,4 @@
-package com.seoulog.user.dto;
+package com.seoulog.common.tokenDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

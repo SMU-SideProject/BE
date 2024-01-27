@@ -1,4 +1,4 @@
-package com.seoulog.user.dto;
+package com.seoulog.common.tokenDto;
 
 import lombok.*;
 import net.minidev.json.JSONObject;

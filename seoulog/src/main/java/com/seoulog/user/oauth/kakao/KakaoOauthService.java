@@ -3,7 +3,7 @@ package com.seoulog.user.oauth.kakao;
 import com.seoulog.user.oauth.OauthApiClient;
 import com.seoulog.user.oauth.OauthInfo;
 import com.seoulog.user.oauth.OauthProfileResponse;
-import com.seoulog.user.dto.TokenDto;
+import com.seoulog.common.tokenDto.TokenDto;
 import com.seoulog.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

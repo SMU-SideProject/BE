@@ -3,7 +3,7 @@ package com.seoulog.user.oauth.kakao;
 import com.seoulog.user.oauth.OauthApiClient;
 import com.seoulog.user.oauth.OauthLoginRequest;
 import com.seoulog.user.oauth.OauthProfileResponse;
-import com.seoulog.user.dto.TokenDto;
+import com.seoulog.common.tokenDto.TokenDto;
 import com.seoulog.user.entity.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;

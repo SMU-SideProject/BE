@@ -1,4 +1,4 @@
-package com.seoulog.user.jwt;
+package com.seoulog.common.jwt;
 
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,11 +13,11 @@ public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
     }
 
     @Override
-    public void configure(HttpSecurity http) {
+    public void configure(HttpSecurity http) throws Exception {
         http.addFilterBefore(
-                new JwtFilter(tokenProvider),
-                UsernamePasswordAuthenticationFilter.class
-        );
+                        new JwtFilter(tokenProvider),
+                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new ExceptionHandlerFilter(), JwtFilter.class)
+        ;
     }
-
 }

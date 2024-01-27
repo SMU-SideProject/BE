@@ -3,7 +3,7 @@ package com.seoulog.user.oauth.naver;
 import com.seoulog.user.oauth.OauthApiClient;
 import com.seoulog.user.oauth.OauthLoginRequest;
 import com.seoulog.user.oauth.OauthProfileResponse;
-import com.seoulog.user.dto.TokenDto;
+import com.seoulog.common.tokenDto.TokenDto;
 import com.seoulog.user.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
