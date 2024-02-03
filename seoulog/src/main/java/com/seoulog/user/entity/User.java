@@ -43,10 +43,13 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<UserTeam> teamList = new ArrayList<>();
 
-    public void updateUserInfo(String nickname, String password) {
-        this.nickname = nickname;
-        this.password = password;
 
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updatePW(String password) {
+        this.password = password;
     }
 
     public void updateRefreshToken(String refreshToken) {
