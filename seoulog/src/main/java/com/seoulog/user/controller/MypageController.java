@@ -32,9 +32,15 @@ public class MypageController {
     /**
      * 회원 정보 변경
      */
-    @PatchMapping("/mypage")
-    public ResponseEntity<String> updateUserInfo(@CurrentUser User user, @RequestBody UserDto userDto) {
-        mypageService.updateUserInfo(user, userDto);
+    @PatchMapping("/mypage/nickname")
+    public ResponseEntity<String> updateUserNickname(@CurrentUser User user, @RequestBody UserDto userDto) {
+        mypageService.updateUserNickname(user, userDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/mypage/password")
+    public ResponseEntity<String> updateUserPW(@CurrentUser User user, @RequestBody UserDto userDto) {
+        mypageService.updatePW(user, userDto);
         return ResponseEntity.ok().build();
     }
 }

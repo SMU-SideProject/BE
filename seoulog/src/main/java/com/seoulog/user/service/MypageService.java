@@ -24,7 +24,18 @@ public class MypageService {
     PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     @Transactional
-    public void updateUserInfo(User user, UserDto userDto) {
+    public void updatePW(User user, UserDto userDto) {
+        if (userRepository.findOneWithAuthoritiesByEmail(user.getEmail()).getRefreshToken() == null) {
+            throw new BusinessException(ErrorCode.TOKEN_EMPTY);
+        } else if (userDto.getPassword().isBlank()) {
+            throw new BusinessException(ErrorCode.SIGNUP_PASSWORD_EMPTY);
+        }
+        User updateUser = userRepository.findOneWithAuthoritiesByEmail(user.getEmail());
+        updateUser.updatePW(encoder.encode(userDto.getPassword())); //더티체킹
+
+    }
+    @Transactional
+    public void updateUserNickname(User user, UserDto userDto) {
         if (userRepository.findOneWithAuthoritiesByEmail(user.getEmail()).getRefreshToken() == null) {
             throw new BusinessException(ErrorCode.TOKEN_EMPTY);
         } else if (userDto.getNickname().isBlank()) {
@@ -33,7 +44,7 @@ public class MypageService {
             throw new BusinessException(ErrorCode.SIGNUP_REDUNDANT_NICKNAME);
         }
         User updateUser = userRepository.findOneWithAuthoritiesByEmail(user.getEmail());
-        updateUser.updateUserInfo(userDto.getNickname(), encoder.encode(userDto.getPassword())); //더티체킹
+        updateUser.updateNickname(userDto.getNickname()); //더티체킹
 
     }
 
